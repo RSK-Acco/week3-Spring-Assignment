@@ -28,6 +28,7 @@ public class OrderService {
 	@Autowired private InventoryRepository ir;
 	@Autowired private UserService us;
 	@Autowired private InventoryService is;
+	@Autowired private WalletService ws;
 	
 	public Orders addOrder(Orders o) {
 		Optional<User> userDetail=this.ur.findById(o.getUserId());
@@ -55,6 +56,7 @@ public class OrderService {
 						}
 						this.us.deductMoney(userObj.getUserId(), bookPrice*0.2);
 						this.is.borrowBook(bookObj.getBookId());
+						this.ws.deductWallet(userObj.getUserId(), balance-bookPrice*0.2);
 					}
 				}
 			}
@@ -79,6 +81,7 @@ public class OrderService {
 			invObj.setBookCount(invObj.getBookCount()+1);
 			o.setDateofReturn(LocalDate.now());
 			o.setStatus("Yes");
+			this.ws.addToWallet(userObj.getUserId(), balance+(0.1*bookPrice));
 		}
 	}
 	public List<String> returnUserTransaction(int uid) {

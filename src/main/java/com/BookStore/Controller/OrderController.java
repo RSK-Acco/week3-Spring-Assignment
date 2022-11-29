@@ -13,11 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.BookStore.Model.Orders;
 import com.BookStore.Services.OrderService;
+import com.BookStore.Services.WalletService;
 
 @RestController
 public class OrderController {
 	@Autowired private OrderService os;
-	
+	@Autowired private WalletService ws;
 	@PostMapping("/orders")
 	private  ResponseEntity<Orders> saveOrder(@RequestBody Orders o){
 		return ResponseEntity.ok().body(this.os.addOrder(o));
@@ -37,5 +38,10 @@ public class OrderController {
 	private  ResponseEntity<List<String>> returnAllTrans(){
 		
 		return ResponseEntity.ok().body(this.os.returnAllTransaction());
+	}
+	@GetMapping("/User-Transactions/{uid}")
+	private  ResponseEntity<List<String>> returnAllUserWalletTrans(@PathVariable int uid){
+		
+		return ResponseEntity.ok().body(this.ws.returnWallet(uid));
 	}
 }

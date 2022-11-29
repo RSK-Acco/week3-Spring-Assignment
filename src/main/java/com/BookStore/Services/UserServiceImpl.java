@@ -8,7 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.BokStore.Exception.UserException;
 import com.BookStore.Model.User;
+import com.BookStore.Model.Wallet;
 import com.BookStore.Repository.UserRepository;
+import com.BookStore.Repository.WalletRepository;
 
 
 
@@ -16,8 +18,8 @@ import com.BookStore.Repository.UserRepository;
 @Transactional
 public class UserServiceImpl implements UserService{
 	
-	@Autowired
-	private UserRepository ur;
+	@Autowired private UserRepository ur;
+	@Autowired private WalletService ws;
 	@Override
 	public User createUser(User u) {
 		return ur.save(u);
@@ -56,6 +58,12 @@ public class UserServiceImpl implements UserService{
 			double totalAfterAdding = newUser.getUserBalance() + moneyToAdd;
 			newUser.setUserBalance(totalAfterAdding);
 			ur.save(newUser);
+			this.ws.addToWallet(uid,totalAfterAdding);
+//			w.setAdd_or_deduct(true);
+//			w.setBalance(totalAfterAdding);
+//			w.setUser_id(uid);
+//			wr.save(w);
+			
 	}
 		 else throw new UserException("User is not found");
 	}
@@ -73,6 +81,8 @@ public class UserServiceImpl implements UserService{
 			User newUser=user.get();
 			double totalAfterDeducting = newUser.getUserBalance() - moneyToDeduct;
 			newUser.setUserBalance(totalAfterDeducting);
-			ur.save(newUser);		
+			ur.save(newUser);	
+			//this.ws.deductWallet(uid,totalAfterDeducting);
 	}
+
 }
